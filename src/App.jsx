@@ -20,10 +20,11 @@ const CustomModal = ({ isOpen, onClose, title, message, icon }) => {
 };
 
 function App() {
-  const [count, setCount] = useState(0);
-  const [inputValue, setInputValue] = useState("");
-  const [errMsg, setErrMsg] = useState("");
-  const [modalData, setModalData] = useState({
+  const [count, setCount] = useState(0); // 当前数字
+  const [inputValue, setInputValue] = useState(""); // 输入框的值
+  const [errMsg, setErrMsg] = useState(""); // 错误信息
+  const [history, setHistory] = useState([]); // 历史记录
+  const [modalData, setModalData] = useState({ // 弹窗数据
     isOpen: false,
     title: "",
     message: "",
@@ -64,6 +65,7 @@ function App() {
       showModal("输入错误", errMessage, "❌");
     } else {
       setCount(Number(inputValue));
+      setHistory([...history, Number(inputValue)]);
     }
   };
 
@@ -83,12 +85,26 @@ function App() {
           />
         </div>
         <div className="button-container">
-          <button className="confirm-btn" onClick={handleConfirm}>
-            <span>确认</span>
-          </button>
-          <button className="reset-btn" onClick={handleReset}>
-            <span>删除</span>
-          </button>
+          <div className="button-row">
+            <button className="confirm-btn" onClick={handleConfirm}>
+              <span>确认</span>
+            </button>
+            <button className="reset-btn" onClick={handleReset}>
+              <span>删除</span>
+            </button>
+          </div>
+          <div className="history-container">
+            <p className="history-title">历史记录</p>
+            {history.length === 0 ? (
+              <div className="history-empty">暂无记录</div>
+            ) : (
+              <ul className="history-list">
+                {history.map((item, index) => (
+                  <li key={index} className="history-item">{item}</li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
       
