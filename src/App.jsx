@@ -100,14 +100,14 @@ function App() {
   };
 
   const scrollToBottom = () => {
-    // requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
       if (historyListRef.current) {
         historyListRef.current.scrollTo({
           top: historyListRef.current.scrollHeight,
           behavior: "smooth",
         });
       }
-    // })
+    })
   };
 
   return (
