@@ -32,6 +32,7 @@ function App() {
     icon: "",
   });
 
+  // 显示弹窗
   const showModal = (title, message, icon) => {
     setModalData({
       isOpen: true,
@@ -41,6 +42,7 @@ function App() {
     });
   };
 
+  // 关闭弹窗
   const closeModal = () => {
     setModalData({
       isOpen: false,
@@ -50,11 +52,13 @@ function App() {
     });
   };
 
+  // 重置
   const handleReset = () => {
     setCount(0);
     setInputValue("");
   };
 
+  // 确认
   const handleConfirm = () => {
     if (inputValue === "") {
       const errMessage = "输入内容不能为空";
@@ -69,24 +73,42 @@ function App() {
       setCount(number); // 设置新输入的值
       setHistory((prev) => {
         const updated = [...prev, number]; // prev 是旧的值，number 是新输入的值，因此 updated 是新的历史记录列表
-        setTimeout(() => {
-          if (historyListRef.current) {
-            historyListRef.current.scrollTo({
-              top: historyListRef.current.scrollHeight,
-              behavior: "smooth",
-            });
-          }
-        }, 0);
+        scrollToBottom();
         return updated;
       });
+      setInputValue(""); // 清空输入框
     }
   };
 
+  // 清除历史记录
   const handleClearHistory = () => {
     setHistory([]);
   };
 
+  // 历史记录列表的引用
   const historyListRef = useRef(null);
+
+  // 增加
+  const handleIncrease = (value) => {
+    const newCount = count + value;
+    setCount(newCount);
+    setHistory((prev) => {
+      const updated = [...prev, newCount];
+      scrollToBottom();
+      return updated;
+    });
+  };
+
+  const scrollToBottom = () => {
+    // requestAnimationFrame(() => {
+      if (historyListRef.current) {
+        historyListRef.current.scrollTo({
+          top: historyListRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    // })
+  };
 
   return (
     <>
@@ -103,13 +125,42 @@ function App() {
             placeholder="请输入数字..."
           />
         </div>
+
+        {/* 操作按钮区域 */}
+        <div className="operation-buttons">
+          <button
+            className="operation-btn decrease"
+            onClick={() => handleIncrease(-10)}
+          >
+            <span>-10</span>
+          </button>
+          <button
+            className="operation-btn decrease"
+            onClick={() => handleIncrease(-1)}
+          >
+            <span>-1</span>
+          </button>
+          <button
+            className="operation-btn increase"
+            onClick={() => handleIncrease(1)}
+          >
+            <span>+1</span>
+          </button>
+          <button
+            className="operation-btn increase"
+            onClick={() => handleIncrease(10)}
+          >
+            <span>+10</span>
+          </button>
+        </div>
+
         <div className="button-container">
           <div className="button-row">
             <button className="confirm-btn" onClick={handleConfirm}>
               <span>确认</span>
             </button>
             <button className="reset-btn" onClick={handleReset}>
-              <span>删除</span>
+              <span>重置</span>
             </button>
           </div>
           <div className="history-container">
