@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import "./App.css";
 
 // 自定义弹窗组件
@@ -24,11 +24,12 @@ function App() {
   const [inputValue, setInputValue] = useState(""); // 输入框的值
   const [errMsg, setErrMsg] = useState(""); // 错误信息
   const [history, setHistory] = useState([]); // 历史记录
-  const [modalData, setModalData] = useState({ // 弹窗数据
+  const [modalData, setModalData] = useState({
+    // 弹窗数据
     isOpen: false,
     title: "",
     message: "",
-    icon: ""
+    icon: "",
   });
 
   const showModal = (title, message, icon) => {
@@ -36,7 +37,7 @@ function App() {
       isOpen: true,
       title,
       message,
-      icon
+      icon,
     });
   };
 
@@ -45,7 +46,7 @@ function App() {
       isOpen: false,
       title: "",
       message: "",
-      icon: ""
+      icon: "",
     });
   };
 
@@ -64,10 +65,28 @@ function App() {
       setErrMsg(errMessage);
       showModal("输入错误", errMessage, "❌");
     } else {
-      setCount(Number(inputValue));
-      setHistory([...history, Number(inputValue)]);
+      const number = Number(inputValue); // 新输入的值
+      setCount(number); // 设置新输入的值
+      setHistory((prev) => {
+        const updated = [...prev, number]; // prev 是旧的值，number 是新输入的值，因此 updated 是新的历史记录列表
+        setTimeout(() => {
+          if (historyListRef.current) {
+            historyListRef.current.scrollTo({
+              top: historyListRef.current.scrollHeight,
+              behavior: "smooth",
+            });
+          }
+        }, 0);
+        return updated;
+      });
     }
   };
+
+  const handleClearHistory = () => {
+    setHistory([]);
+  };
+
+  const historyListRef = useRef(null);
 
   return (
     <>
@@ -94,20 +113,27 @@ function App() {
             </button>
           </div>
           <div className="history-container">
-            <p className="history-title">历史记录</p>
+            <div className="history-header">
+              <p className="history-title">历史记录</p>
+              <button className="confirm-btn" onClick={handleClearHistory}>
+                清除数据
+              </button>
+            </div>
             {history.length === 0 ? (
               <div className="history-empty">暂无记录</div>
             ) : (
-              <ul className="history-list">
+              <ul className="history-list" ref={historyListRef}>
                 {history.map((item, index) => (
-                  <li key={index} className="history-item">{item}</li>
+                  <li key={index} className="history-item">
+                    {item}
+                  </li>
                 ))}
               </ul>
             )}
           </div>
         </div>
       </div>
-      
+
       <CustomModal
         isOpen={modalData.isOpen}
         onClose={closeModal}

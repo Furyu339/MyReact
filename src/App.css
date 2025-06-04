@@ -275,12 +275,21 @@ button span {
   100% { left: 100%; }
 }
 
+/* 历史记录头部容器 */
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
 /* 历史记录标题样式 */
 .history-title {
   font-size: 1.2rem;
   font-weight: 700;
-  margin: 0 0 15px 0;
-  text-align: center;
+  margin: 0;
+  text-align: left;
   background: linear-gradient(45deg, #4ecdc4, #45b7d1, #96ceb4);
   background-size: 200% 200%;
   -webkit-background-clip: text;
