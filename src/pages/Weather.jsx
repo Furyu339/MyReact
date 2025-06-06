@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react'
+import { Card, Typography } from 'antd'
+
+const { Title, Paragraph } = Typography
 
 const Weather = () => {
   const [weather, setWeather] = useState(null)
@@ -17,11 +20,13 @@ const Weather = () => {
   if (!weather) return <div>加载中...</div>
 
   return (
-    <div>
-      <h2>伦敦当前天气</h2>
-      <p>温度: {weather.temperature}&deg;C</p>
-      <p>风速: {weather.windspeed}km/h</p>
-    </div>
+    <Card style={{ maxWidth: 400, margin: '0 auto' }}>
+      <Title level={3} style={{ textAlign: 'center' }}>
+        伦敦当前天气
+      </Title>
+      <Paragraph>温度: {weather.temperature}&deg;C</Paragraph>
+      <Paragraph>风速: {weather.windspeed}km/h</Paragraph>
+    </Card>
   )
 }
 
