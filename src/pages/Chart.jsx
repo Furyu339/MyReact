@@ -1,4 +1,7 @@
 import ReactECharts from 'echarts-for-react'
+import { Card, Typography } from 'antd'
+
+const { Title } = Typography
 
 const option = {
   title: { text: '示例柱状图' },
@@ -14,6 +17,11 @@ const option = {
   ],
 }
 
-const Chart = () => <ReactECharts option={option} style={{ height: 400 }} />
+const Chart = () => (
+  <Card>
+    <Title level={3} style={{ textAlign: 'center' }}>示例柱状图</Title>
+    <ReactECharts option={option} style={{ height: 400 }} />
+  </Card>
+)
 
 export default Chart
