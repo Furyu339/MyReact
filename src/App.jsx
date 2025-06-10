@@ -1,9 +1,22 @@
-import { useState, useRef } from "react";
+import { useState, useRef,useEffect,useLayoutEffect } from "react";
 import "./App.css";
 
 // 自定义弹窗组件
-const CustomModal = ({ isOpen, onClose, title, message, icon }) => {
+const CustomModal = ({ isOpen, onClose, title, message, icon, onKeyDown }) => {
+  const buttonRef = useRef(null);
+
+  useLayoutEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        if (buttonRef.current) {
+          buttonRef.current.focus();
+        }
+      }, 0);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
+
 
   return (
     <div className="custom-modal" onClick={onClose}>
@@ -11,7 +24,7 @@ const CustomModal = ({ isOpen, onClose, title, message, icon }) => {
         <div className="modal-icon">{icon}</div>
         <div className="modal-title">{title}</div>
         <div className="modal-message">{message}</div>
-        <button className="modal-button" onClick={onClose}>
+        <button className="modal-button" onClick={onClose} onKeyDown={onKeyDown} ref={buttonRef}>
           确定
         </button>
       </div>
@@ -40,6 +53,7 @@ function App() {
       message,
       icon,
     });
+    setInputValue("");
   };
 
   // 关闭弹窗
@@ -52,6 +66,16 @@ function App() {
     });
   };
 
+  // 输入框的引用
+  const textRef = useRef(null);
+
+  // 输入框的焦点
+  useEffect(() => {
+    if (!modalData.isOpen && textRef.current) {
+      textRef.current.focus();
+    }
+  }, [modalData.isOpen]);
+
   // 重置
   const handleReset = () => {
     setCount(0);
@@ -60,24 +84,39 @@ function App() {
 
   // 确认
   const handleConfirm = () => {
-    if (inputValue === "") {
+    if (inputValue.trim() === "") {
       const errMessage = "输入内容不能为空";
       setErrMsg(errMessage);
       showModal("输入错误", errMessage, "⚠️");
-    } else if (isNaN(Number(inputValue))) {
+    } else if (isNaN(Number(inputValue.trim()))) {
       const errMessage = "请输入数字";
       setErrMsg(errMessage);
       showModal("输入错误", errMessage, "❌");
     } else {
-      const number = Number(inputValue); // 新输入的值
+      const number = Number(inputValue.trim()); // 新输入的值
       setCount(number); // 设置新输入的值
       setHistory((prev) => {
         const updated = [...prev, number]; // prev 是旧的值，number 是新输入的值，因此 updated 是新的历史记录列表
-        scrollToBottom();
         return updated;
       });
       setInputValue(""); // 清空输入框
+      scrollToBottom();
     }
+  };
+
+  // 历史记录列表的引用
+  const historyListRef = useRef(null);
+
+  // 滚动到历史记录列表底部
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      if (historyListRef.current) {
+        historyListRef.current.scrollTo({
+          top: historyListRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    }, 0);
   };
 
   // 清除历史记录
@@ -85,29 +124,32 @@ function App() {
     setHistory([]);
   };
 
-  // 历史记录列表的引用
-  const historyListRef = useRef(null);
-
   // 增加
   const handleIncrease = (value) => {
     const newCount = count + value;
     setCount(newCount);
     setHistory((prev) => {
       const updated = [...prev, newCount];
-      scrollToBottom();
       return updated;
     });
+    scrollToBottom();
   };
 
-  const scrollToBottom = () => {
-    requestAnimationFrame(() => {
-      if (historyListRef.current) {
-        historyListRef.current.scrollTo({
-          top: historyListRef.current.scrollHeight,
-          behavior: "smooth",
-        });
-      }
-    })
+  // 按下回车键确认
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      handleConfirm();
+    }
+  };
+  
+  const handleKeyDown2 = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      closeModal();
+    }
   };
 
   return (
@@ -123,6 +165,8 @@ function App() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="请输入数字..."
+            onKeyDown={handleKeyDown}
+            ref={textRef}
           />
         </div>
 
@@ -191,6 +235,7 @@ function App() {
         title={modalData.title}
         message={modalData.message}
         icon={modalData.icon}
+        onKeyDown={handleKeyDown2}
       />
     </>
   );
