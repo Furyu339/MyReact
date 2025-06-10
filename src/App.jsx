@@ -1,6 +1,31 @@
 import { useState, useRef,useEffect,useLayoutEffect } from "react";
 import "./App.css";
 
+const HISTORY_STORAGE_KEY = "numberHistory";
+
+const NUMBER_STORAGE_KEY = "number";
+
+// 从 localStorage 读取历史记录
+const getHistoryFromStorage = () => {
+  const stored = localStorage.getItem(HISTORY_STORAGE_KEY);
+  return stored ? JSON.parse(stored) : [];
+};
+
+// 保存历史记录到 localStorage
+const setHistoryToStorage = (history) => {
+  localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+};
+
+const getNumberFromStorage = () => {
+  const stored = localStorage.getItem(NUMBER_STORAGE_KEY);
+  return stored ? JSON.parse(stored) : 0;
+};
+
+const setNumberToStorage = (number) => {
+  localStorage.setItem(NUMBER_STORAGE_KEY, JSON.stringify(number));
+};
+
+
 // 自定义弹窗组件
 const CustomModal = ({ isOpen, onClose, title, message, icon, onKeyDown }) => {
   const buttonRef = useRef(null);
@@ -33,10 +58,10 @@ const CustomModal = ({ isOpen, onClose, title, message, icon, onKeyDown }) => {
 };
 
 function App() {
-  const [count, setCount] = useState(0); // 当前数字
+  const [count, setCount] = useState(() => getNumberFromStorage()); // 当前数字
   const [inputValue, setInputValue] = useState(""); // 输入框的值
   const [errMsg, setErrMsg] = useState(""); // 错误信息
-  const [history, setHistory] = useState([]); // 历史记录
+  const [history, setHistory] = useState(() => getHistoryFromStorage()); // 历史记录
   const [modalData, setModalData] = useState({
     // 弹窗数据
     isOpen: false,
@@ -76,10 +101,22 @@ function App() {
     }
   }, [modalData.isOpen]);
 
+  useEffect(() => {
+    setHistoryToStorage(history);
+    if (history.length > 0) {
+      scrollToBottom();
+    }
+  }, [history]);
+
+  useEffect(() => {
+    setNumberToStorage(count);
+  }, [count]);
+
   // 重置
   const handleReset = () => {
-    setCount(0);
-    setInputValue("");
+    setCount(0); // 重置当前数字
+    setInputValue(""); // 清空输入框
+    setHistory([]); // 清空历史记录
   };
 
   // 确认
@@ -100,7 +137,6 @@ function App() {
         return updated;
       });
       setInputValue(""); // 清空输入框
-      scrollToBottom();
     }
   };
 
@@ -132,7 +168,6 @@ function App() {
       const updated = [...prev, newCount];
       return updated;
     });
-    scrollToBottom();
   };
 
   // 按下回车键确认
@@ -211,7 +246,7 @@ function App() {
             <div className="history-header">
               <p className="history-title">历史记录</p>
               <button className="confirm-btn" onClick={handleClearHistory}>
-                清除数据
+                清除历史记录
               </button>
             </div>
             {history.length === 0 ? (
