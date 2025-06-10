@@ -1,0 +1,214 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+// 模态框组件样式
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: $z-modal-backdrop;
+  @include flex-center;
+  
+  // 模态框遮罩
+  &__backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba($gray-900, 0.5);
+    backdrop-filter: blur(4px);
+    animation: modalFadeIn 0.2s ease-out;
+  }
+  
+  // 模态框内容
+  &__content {
+    position: relative;
+    z-index: $z-modal;
+    background-color: $bg-primary;
+    border-radius: $border-radius-xl;
+    box-shadow: $shadow-xl;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease-out;
+    
+    // 模态框尺寸变体
+    &--sm {
+      width: 320px;
+    }
+    
+    &--md {
+      width: 480px;
+    }
+    
+    &--lg {
+      width: 640px;
+    }
+    
+    &--xl {
+      width: 800px;
+    }
+    
+    &--full {
+      width: 95vw;
+      height: 95vh;
+    }
+  }
+  
+  // 模态框头部
+  &__header {
+    padding: $spacing-6;
+    border-bottom: 1px solid $gray-200;
+    @include flex-between;
+    
+    .modal__title {
+      margin: 0;
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: $text-primary;
+    }
+    
+    .modal__close {
+      @include button-base;
+      padding: $spacing-2;
+      border-radius: $border-radius-base;
+      color: $text-tertiary;
+      
+      &:hover {
+        background-color: $gray-100;
+        color: $text-primary;
+      }
+    }
+  }
+  
+  // 模态框主体
+  &__body {
+    padding: $spacing-6;
+    overflow-y: auto;
+    @include custom-scrollbar;
+  }
+  
+  // 模态框底部
+  &__footer {
+    padding: $spacing-6;
+    border-top: 1px solid $gray-200;
+    @include flex-between;
+    gap: $spacing-3;
+    
+    &--center {
+      justify-content: center;
+    }
+    
+    &--end {
+      justify-content: flex-end;
+    }
+  }
+}
+
+// 模态框动画
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// 确认模态框特殊样式
+.confirm-modal {
+  .modal__content {
+    @extend .modal__content--sm;
+  }
+  
+  .modal__body {
+    text-align: center;
+    padding: $spacing-8 $spacing-6;
+    
+    .confirm-icon {
+      font-size: 3rem;
+      margin-bottom: $spacing-4;
+      
+      &--success {
+        color: $success-color;
+      }
+      
+      &--warning {
+        color: $warning-color;
+      }
+      
+      &--danger {
+        color: $danger-color;
+      }
+      
+      &--info {
+        color: $info-color;
+      }
+    }
+    
+    .confirm-title {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $text-primary;
+      margin-bottom: $spacing-2;
+    }
+    
+    .confirm-message {
+      font-size: $font-size-base;
+      color: $text-secondary;
+      line-height: 1.5;
+    }
+  }
+  
+  .modal__footer {
+    justify-content: center;
+    gap: $spacing-4;
+  }
+}
+
+// 响应式调整
+@include mobile-only {
+  .modal {
+    &__content {
+      margin: $spacing-4;
+      max-width: calc(100vw - #{$spacing-8});
+      
+      &--sm,
+      &--md,
+      &--lg,
+      &--xl {
+        width: 100%;
+      }
+    }
+    
+    &__header,
+    &__body,
+    &__footer {
+      padding: $spacing-4;
+    }
+  }
+  
+  .confirm-modal {
+    .modal__body {
+      padding: $spacing-6 $spacing-4;
+      
+      .confirm-icon {
+        font-size: 2.5rem;
+      }
+    }
+  }
+} 

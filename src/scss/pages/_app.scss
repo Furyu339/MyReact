@@ -1,0 +1,170 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+// 应用主页面样式
+.app {
+  min-height: 100vh;
+  @include flex-center;
+  padding: $spacing-4;
+  background-color: $bg-secondary;
+  
+  // 主容器
+  &__container {
+    width: 100%;
+    max-width: 480px;
+    @include flex-column;
+    gap: $spacing-6;
+  }
+  
+  // 头部标题区域
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-2;
+    
+    .app__title {
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-bold;
+      color: $text-primary;
+      margin-bottom: $spacing-2;
+      
+      @include respond-to(md) {
+        font-size: $font-size-3xl;
+      }
+    }
+    
+    .app__subtitle {
+      font-size: $font-size-base;
+      color: $text-secondary;
+      margin: 0;
+    }
+  }
+  
+  // 输入区域
+  &__input-section {
+    .input-group {
+      margin-bottom: $spacing-4;
+    }
+  }
+  
+  // 操作按钮区域
+  &__operations {
+    .operations-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: $spacing-3;
+      margin: $spacing-4 0;
+      
+      @include mobile-only {
+        grid-template-columns: repeat(2, 1fr);
+        gap: $spacing-2;
+      }
+    }
+    
+    .operations-actions {
+      @include flex-center;
+      gap: $spacing-4;
+      margin-top: $spacing-6;
+      
+      @include mobile-only {
+        flex-direction: column;
+        gap: $spacing-3;
+        
+        .btn {
+          width: 100%;
+          max-width: 200px;
+        }
+      }
+    }
+  }
+  
+  // 历史记录区域
+  &__history {
+    margin-top: $spacing-2;
+  }
+}
+
+// 操作按钮网格布局
+.operations-grid {
+  .operation-btn {
+    @include flex-center;
+    flex-direction: column;
+    gap: $spacing-1;
+    padding: $spacing-2 $spacing-3;
+    height: 60px;
+    min-height: 60px;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    // 按钮图标
+    .btn-icon {
+      font-size: $font-size-base;
+      margin-bottom: $spacing-1;
+    }
+    
+    // 按钮文字
+    .btn-text {
+      font-size: $font-size-xs;
+      line-height: 1;
+    }
+    
+    @include mobile-only {
+      padding: $spacing-2;
+      height: 50px;
+      min-height: 50px;
+      font-size: 0.7rem;
+      
+      .btn-icon {
+        font-size: $font-size-sm;
+      }
+      
+      .btn-text {
+        font-size: 0.65rem;
+      }
+    }
+  }
+}
+
+// 响应式布局调整
+@include mobile-only {
+  .app {
+    padding: $spacing-3;
+    
+    &__container {
+      gap: $spacing-4;
+    }
+    
+    &__header {
+      margin-bottom: $spacing-1;
+      
+      .app__title {
+        font-size: $font-size-xl;
+      }
+      
+      .app__subtitle {
+        font-size: $font-size-sm;
+      }
+    }
+    
+    &__operations {
+      .operations-actions {
+        margin-top: $spacing-4;
+      }
+    }
+  }
+}
+
+@include respond-to(lg) {
+  .app {
+    &__container {
+      max-width: 520px;
+    }
+  }
+}
+
+// 深色模式支持（为未来扩展预留）
+@media (prefers-color-scheme: dark) {
+  // 可以在这里添加深色模式样式
+  // 当前保持空白，等待后续需求
+} 

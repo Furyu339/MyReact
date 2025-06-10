@@ -1,0 +1,194 @@
+@use 'sass:color';
+@use 'sass:math';
+@use 'variables' as *;
+
+// 响应式断点 Mixin
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == sm {
+    @media (min-width: $breakpoint-sm) { @content; }
+  }
+  @if $breakpoint == md {
+    @media (min-width: $breakpoint-md) { @content; }
+  }
+  @if $breakpoint == lg {
+    @media (min-width: $breakpoint-lg) { @content; }
+  }
+  @if $breakpoint == xl {
+    @media (min-width: $breakpoint-xl) { @content; }
+  }
+}
+
+// 移动端优先的响应式
+@mixin mobile-only {
+  @media (max-width: #{$breakpoint-sm - 1px}) { @content; }
+}
+
+// 按钮基础样式 Mixin
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-3 $spacing-6;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: 1.5;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: $border-radius-base;
+  cursor: pointer;
+  transition: $transition-base;
+  outline: none;
+  user-select: none;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+// 按钮变体 Mixin
+@mixin button-variant($bg-color, $text-color: $white, $hover-bg: null) {
+  background-color: $bg-color;
+  color: $text-color;
+  border-color: $bg-color;
+
+  @if $hover-bg {
+    &:hover:not(:disabled) {
+      background-color: $hover-bg;
+      border-color: $hover-bg;
+    }
+  } @else {
+    &:hover:not(:disabled) {
+      background-color: color.adjust($bg-color, $lightness: -8%);
+      border-color: color.adjust($bg-color, $lightness: -8%);
+    }
+  }
+
+  &:active:not(:disabled) {
+    background-color: color.adjust($bg-color, $lightness: -12%);
+    border-color: color.adjust($bg-color, $lightness: -12%);
+    transform: translateY(1px);
+  }
+}
+
+// 输入框基础样式 Mixin
+@mixin input-base {
+  width: 100%;
+  padding: $spacing-3 $spacing-4;
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: 1.5;
+  color: $text-primary;
+  background-color: $bg-primary;
+  border: 1px solid $gray-300;
+  border-radius: $border-radius-base;
+  outline: none;
+  transition: $transition-base;
+
+  &::placeholder {
+    color: $text-tertiary;
+  }
+
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+
+  &:disabled {
+    background-color: $gray-100;
+    color: $text-tertiary;
+    cursor: not-allowed;
+  }
+}
+
+// 卡片基础样式 Mixin
+@mixin card-base {
+  background-color: $bg-primary;
+  border: 1px solid $gray-200;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+}
+
+// 弹性布局工具 Mixin
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// 文字截断 Mixin
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// 隐藏滚动条 Mixin
+@mixin hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// 自定义滚动条 Mixin
+@mixin custom-scrollbar($width: 6px, $track-color: $gray-100, $thumb-color: $gray-300) {
+  &::-webkit-scrollbar {
+    width: $width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $track-color;
+    border-radius: math.div($width, 2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $thumb-color;
+    border-radius: math.div($width, 2);
+
+    &:hover {
+      background: color.adjust($thumb-color, $lightness: -10%);
+    }
+  }
+}
+
+// 悬浮效果 Mixin
+@mixin hover-lift {
+  transition: $transition-base;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+}
+
+// 焦点环 Mixin
+@mixin focus-ring($color: $primary-color) {
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($color, 0.1);
+  }
+} 

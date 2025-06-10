@@ -1,0 +1,169 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+// 按钮组件样式
+.btn {
+  @include button-base;
+  
+  // 按钮尺寸变体
+  &--sm {
+    padding: $spacing-2 $spacing-4;
+    font-size: $font-size-xs;
+  }
+  
+  &--lg {
+    padding: $spacing-4 $spacing-8;
+    font-size: $font-size-lg;
+  }
+  
+  // 按钮样式变体
+  &--primary {
+    @include button-variant($primary-color);
+  }
+  
+  &--secondary {
+    @include button-variant($gray-600);
+  }
+  
+  &--success {
+    @include button-variant($success-color);
+  }
+  
+  &--danger {
+    @include button-variant($danger-color);
+  }
+  
+  &--warning {
+    @include button-variant($warning-color);
+  }
+  
+  &--info {
+    @include button-variant($info-color);
+  }
+  
+  // 轮廓按钮
+  &--outline {
+    background-color: transparent;
+    color: $primary-color;
+    border-color: $primary-color;
+    
+    &:hover:not(:disabled) {
+      background-color: $primary-color;
+      color: $white;
+    }
+    
+    &.btn--secondary {
+      color: $gray-600;
+      border-color: $gray-600;
+      
+      &:hover:not(:disabled) {
+        background-color: $gray-600;
+        color: $white;
+      }
+    }
+  }
+  
+  // 文字按钮
+  &--text {
+    background-color: transparent;
+    border-color: transparent;
+    color: $primary-color;
+    
+    &:hover:not(:disabled) {
+      background-color: rgba($primary-color, 0.1);
+    }
+    
+    &:active:not(:disabled) {
+      background-color: rgba($primary-color, 0.2);
+    }
+  }
+  
+  // 图标按钮
+  &--icon {
+    padding: $spacing-3;
+    border-radius: $border-radius-full;
+    
+    &.btn--sm {
+      padding: $spacing-2;
+    }
+    
+    &.btn--lg {
+      padding: $spacing-4;
+    }
+  }
+  
+  // 全宽按钮
+  &--full {
+    width: 100%;
+  }
+  
+  // 带阴影效果
+  &--shadow {
+    @include hover-lift;
+  }
+}
+
+// 按钮组
+.btn-group {
+  display: flex;
+  gap: $spacing-2;
+  
+  &--vertical {
+    flex-direction: column;
+  }
+  
+  &--center {
+    justify-content: center;
+  }
+  
+  &--end {
+    justify-content: flex-end;
+  }
+}
+
+// 操作按钮特殊样式
+.operation-btn {
+  @extend .btn;
+  @extend .btn--lg;
+  @extend .btn--shadow;
+  font-weight: $font-weight-semibold;
+  min-width: 80px;
+  
+  &--increase {
+    @include button-variant($success-color);
+  }
+  
+  &--decrease {
+    @include button-variant($danger-color);
+  }
+}
+
+// 历史记录按钮样式
+.history-btn {
+  @extend .btn;
+  @extend .btn--sm;
+  font-weight: $font-weight-semibold;
+  
+  &--export {
+    @include button-variant($info-color);
+  }
+  
+  &--import {
+    @include button-variant($warning-color);
+  }
+}
+
+// 响应式调整
+@include mobile-only {
+  .btn {
+    &--lg {
+      padding: $spacing-3 $spacing-6;
+      font-size: $font-size-base;
+    }
+  }
+  
+  .operation-btn {
+    min-width: 70px;
+    font-size: $font-size-sm;
+  }
+} 

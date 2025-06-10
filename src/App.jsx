@@ -1,8 +1,7 @@
-import { useState, useRef,useEffect,useLayoutEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import "./App.css";
 
 const HISTORY_STORAGE_KEY = "numberHistory";
-
 const NUMBER_STORAGE_KEY = "number";
 
 // 从 localStorage 读取历史记录
@@ -25,9 +24,8 @@ const setNumberToStorage = (number) => {
   localStorage.setItem(NUMBER_STORAGE_KEY, JSON.stringify(number));
 };
 
-
-// 自定义弹窗组件
-const CustomModal = ({ isOpen, onClose, title, message, icon, onKeyDown }) => {
+// 现代化模态框组件
+const ConfirmModal = ({ isOpen, onClose, title, message, icon, onKeyDown }) => {
   const buttonRef = useRef(null);
 
   useLayoutEffect(() => {
@@ -42,35 +40,45 @@ const CustomModal = ({ isOpen, onClose, title, message, icon, onKeyDown }) => {
 
   if (!isOpen) return null;
 
-
   return (
-    <div className="custom-modal" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-icon">{icon}</div>
-        <div className="modal-title">{title}</div>
-        <div className="modal-message">{message}</div>
-        <button className="modal-button" onClick={onClose} onKeyDown={onKeyDown} ref={buttonRef}>
-          确定
-        </button>
+    <div className="modal" onClick={onClose}>
+      <div className="modal__backdrop"></div>
+      <div className="modal__content confirm-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal__body">
+          <div className={`confirm-icon confirm-icon--${icon === '⚠️' ? 'warning' : icon === '❌' ? 'danger' : 'info'}`}>
+            {icon}
+          </div>
+          <div className="confirm-title">{title}</div>
+          <div className="confirm-message">{message}</div>
+        </div>
+        <div className="modal__footer">
+          <button 
+            className="btn btn--primary modal__button" 
+            onClick={onClose} 
+            onKeyDown={onKeyDown} 
+            ref={buttonRef}
+          >
+            确定
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
 function App() {
-  const [count, setCount] = useState(() => getNumberFromStorage()); // 当前数字
-  const [inputValue, setInputValue] = useState(""); // 输入框的值
-  const [errMsg, setErrMsg] = useState(""); // 错误信息
-  const [history, setHistory] = useState(() => getHistoryFromStorage()); // 历史记录
+  const [count, setCount] = useState(() => getNumberFromStorage());
+  const [inputValue, setInputValue] = useState("");
+  const [errMsg, setErrMsg] = useState("");
+  const [history, setHistory] = useState(() => getHistoryFromStorage());
   const [modalData, setModalData] = useState({
-    // 弹窗数据
     isOpen: false,
     title: "",
     message: "",
     icon: "",
   });
 
-  // 显示弹窗
+  // 显示模态框
   const showModal = (title, message, icon) => {
     setModalData({
       isOpen: true,
@@ -81,7 +89,7 @@ function App() {
     setInputValue("");
   };
 
-  // 关闭弹窗
+  // 关闭模态框
   const closeModal = () => {
     setModalData({
       isOpen: false,
@@ -91,10 +99,10 @@ function App() {
     });
   };
 
-  // 输入框的引用
   const textRef = useRef(null);
+  const historyListRef = useRef(null);
 
-  // 输入框的焦点
+  // 输入框焦点管理
   useEffect(() => {
     if (!modalData.isOpen && textRef.current) {
       textRef.current.focus();
@@ -112,14 +120,14 @@ function App() {
     setNumberToStorage(count);
   }, [count]);
 
-  // 重置
+  // 重置功能
   const handleReset = () => {
-    setCount(0); // 重置当前数字
-    setInputValue(""); // 清空输入框
-    setHistory([]); // 清空历史记录
+    setCount(0);
+    setInputValue("");
+    setHistory([]);
   };
 
-  // 确认
+  // 确认输入
   const handleConfirm = () => {
     if (inputValue.trim() === "") {
       const errMessage = "输入内容不能为空";
@@ -130,20 +138,17 @@ function App() {
       setErrMsg(errMessage);
       showModal("输入错误", errMessage, "❌");
     } else {
-      const number = Number(inputValue.trim()); // 新输入的值
-      setCount(number); // 设置新输入的值
+      const number = Number(inputValue.trim());
+      setCount(number);
       setHistory((prev) => {
-        const updated = [...prev, number]; // prev 是旧的值，number 是新输入的值，因此 updated 是新的历史记录列表
+        const updated = [...prev, number];
         return updated;
       });
-      setInputValue(""); // 清空输入框
+      setInputValue("");
     }
   };
 
-  // 历史记录列表的引用
-  const historyListRef = useRef(null);
-
-  // 滚动到历史记录列表底部
+  // 滚动到历史记录底部
   const scrollToBottom = () => {
     setTimeout(() => {
       if (historyListRef.current) {
@@ -160,7 +165,7 @@ function App() {
     setHistory([]);
   };
 
-  // 增加
+  // 数字增减操作
   const handleIncrease = (value) => {
     const newCount = count + value;
     setCount(newCount);
@@ -170,7 +175,7 @@ function App() {
     });
   };
 
-  // 按下回车键确认
+  // 键盘事件处理
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -178,7 +183,7 @@ function App() {
       handleConfirm();
     }
   };
-  
+
   const handleKeyDown2 = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -188,83 +193,113 @@ function App() {
   };
 
   return (
-    <>
-      <div className="decoration"></div>
-      <div className="decoration"></div>
-      <div className="decoration"></div>
-      <div className="app-container">
-        <div className="card">
-          <p>现在数字为 {count}</p>
-          <input
-            type="text"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            placeholder="请输入数字..."
-            onKeyDown={handleKeyDown}
-            ref={textRef}
-          />
+    <div className="app">
+      <div className="app__container">
+        {/* 标题区域 */}
+        <header className="app__header">
+          <h1 className="app__title">数字计算器</h1>
+          <p className="app__subtitle">现代化、简约的数字操作工具</p>
+        </header>
+
+        {/* 数字显示卡片 */}
+        <div className="number-card">
+          <div className="number-label">当前数字</div>
+          <div className="number-display">{count}</div>
         </div>
+
+        {/* 输入区域 */}
+        <section className="app__input-section">
+          <div className="input-group">
+            <input
+              className="number-input"
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="请输入数字..."
+              onKeyDown={handleKeyDown}
+              ref={textRef}
+            />
+          </div>
+        </section>
 
         {/* 操作按钮区域 */}
-        <div className="operation-buttons">
-          <button
-            className="operation-btn decrease"
-            onClick={() => handleIncrease(-10)}
-          >
-            <span>-10</span>
-          </button>
-          <button
-            className="operation-btn decrease"
-            onClick={() => handleIncrease(-1)}
-          >
-            <span>-1</span>
-          </button>
-          <button
-            className="operation-btn increase"
-            onClick={() => handleIncrease(1)}
-          >
-            <span>+1</span>
-          </button>
-          <button
-            className="operation-btn increase"
-            onClick={() => handleIncrease(10)}
-          >
-            <span>+10</span>
-          </button>
-        </div>
+        <section className="app__operations">
+          <div className="operations-grid">
+            <button
+              className="operation-btn operation-btn--decrease"
+              onClick={() => handleIncrease(-10)}
+            >
+              <span className="btn-icon">-</span>
+              <span className="btn-text">10</span>
+            </button>
+            <button
+              className="operation-btn operation-btn--decrease"
+              onClick={() => handleIncrease(-1)}
+            >
+              <span className="btn-icon">-</span>
+              <span className="btn-text">1</span>
+            </button>
+            <button
+              className="operation-btn operation-btn--increase"
+              onClick={() => handleIncrease(1)}
+            >
+              <span className="btn-icon">+</span>
+              <span className="btn-text">1</span>
+            </button>
+            <button
+              className="operation-btn operation-btn--increase"
+              onClick={() => handleIncrease(10)}
+            >
+              <span className="btn-icon">+</span>
+              <span className="btn-text">10</span>
+            </button>
+          </div>
 
-        <div className="button-container">
-          <div className="button-row">
-            <button className="confirm-btn" onClick={handleConfirm}>
-              <span>确认</span>
+          <div className="operations-actions">
+            <button className="btn btn--primary btn--lg" onClick={handleConfirm}>
+              确认
             </button>
-            <button className="reset-btn" onClick={handleReset}>
-              <span>重置</span>
+            <button className="btn btn--danger btn--lg" onClick={handleReset}>
+              重置
             </button>
           </div>
-          <div className="history-container">
+        </section>
+
+        {/* 历史记录区域 */}
+        <section className="app__history">
+          <div className="history-card">
             <div className="history-header">
-              <p className="history-title">历史记录</p>
-              <button className="confirm-btn" onClick={handleClearHistory}>
-                清除历史记录
-              </button>
+              <h3 className="history-title">历史记录</h3>
+              <div className="history-controls">
+                <button className="history-btn history-btn--export">
+                  导出
+                </button>
+                <button className="history-btn history-btn--import">
+                  导入
+                </button>
+                <button className="btn btn--primary btn--sm" onClick={handleClearHistory}>
+                  清除
+                </button>
+              </div>
             </div>
-            {history.length === 0 ? (
-              <div className="history-empty">暂无记录</div>
-            ) : (
-              <ul className="history-list" ref={historyListRef}>
-                {history.map((item, index) => (
-                  <li key={index} className="history-item">
+
+            <div className="history-list" ref={historyListRef}>
+              {history.length === 0 ? (
+                <div className="history-empty">暂无历史记录</div>
+              ) : (
+                history.map((item, index) => (
+                  <div key={index} className="history-item">
                     {item}
-                  </li>
-                ))}
-              </ul>
-            )}
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-        </div>
+        </section>
       </div>
 
-      <CustomModal
+      {/* 模态框 */}
+      <ConfirmModal
         isOpen={modalData.isOpen}
         onClose={closeModal}
         title={modalData.title}
@@ -272,7 +307,7 @@ function App() {
         icon={modalData.icon}
         onKeyDown={handleKeyDown2}
       />
-    </>
+    </div>
   );
 }
 
