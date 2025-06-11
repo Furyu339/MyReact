@@ -132,12 +132,13 @@
 // 确认模态框特殊样式
 .confirm-modal {
   .modal__content {
-    @extend .modal__content--sm;
+    @extend .modal__content--md;
   }
   
   .modal__body {
     text-align: center;
     padding: $spacing-8 $spacing-6;
+    min-width: 320px;
     
     .confirm-icon {
       font-size: 3rem;
@@ -164,13 +165,15 @@
       font-size: $font-size-lg;
       font-weight: $font-weight-semibold;
       color: $text-primary;
-      margin-bottom: $spacing-2;
+      margin-bottom: $spacing-3;
+      line-height: 1.4;
     }
     
     .confirm-message {
       font-size: $font-size-base;
       color: $text-secondary;
-      line-height: 1.5;
+      line-height: 1.6;
+      word-wrap: break-word;
     }
   }
   

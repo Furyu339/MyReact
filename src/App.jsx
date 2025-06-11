@@ -224,34 +224,30 @@ function App() {
 
         {/* 操作按钮区域 */}
         <section className="app__operations">
-          <div className="operations-grid">
+          <div className="operations-group">
             <button
               className="operation-btn operation-btn--decrease"
               onClick={() => handleIncrease(-10)}
             >
-              <span className="btn-icon">-</span>
-              <span className="btn-text">10</span>
+              - 10
             </button>
             <button
               className="operation-btn operation-btn--decrease"
               onClick={() => handleIncrease(-1)}
             >
-              <span className="btn-icon">-</span>
-              <span className="btn-text">1</span>
+              - 1
             </button>
             <button
               className="operation-btn operation-btn--increase"
               onClick={() => handleIncrease(1)}
             >
-              <span className="btn-icon">+</span>
-              <span className="btn-text">1</span>
+              + 1
             </button>
             <button
               className="operation-btn operation-btn--increase"
               onClick={() => handleIncrease(10)}
             >
-              <span className="btn-icon">+</span>
-              <span className="btn-text">10</span>
+              + 10
             </button>
           </div>
 
